@@ -33,6 +33,12 @@ public class AccountService implements UserDetailsService {
   @Autowired
   private TransactionRepository transactionRepository;
 
+  /**
+   * Find an account by username.
+   * 
+   * @param username
+   * @return
+   */
   public Account findAccountByUsername(String username) {
     return accountRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Account not found."));
   }
@@ -104,6 +110,12 @@ public class AccountService implements UserDetailsService {
     return transactionRepository.findByAccountId(account.getId());
   }
 
+  /**
+   * Login.
+   * 
+   * @param username
+   * @return
+   */
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     Account account = findAccountByUsername(username);
     if (account == null) {
@@ -118,10 +130,14 @@ public class AccountService implements UserDetailsService {
         authorities());
   }
 
-  public Collection<? extends GrantedAuthority> authorities() {
-    return Arrays.asList(new SimpleGrantedAuthority("User"));
-  }
-
+  /**
+   * To transfer money between users.
+   * 
+   * @param fromAccount
+   * @param toUsername
+   * @param amount
+   * @throws RuntimeException
+   */
   @Transactional
   public void transferAmount(Account fromAccount, String toUsername, BigDecimal amount) throws RuntimeException {
     if (fromAccount.getBalance().compareTo(amount) < 0) {
@@ -153,5 +169,13 @@ public class AccountService implements UserDetailsService {
         LocalDateTime.now(),
         toAccount);
     transactionRepository.save(creditTransaction);
+  }
+
+  /**
+   * 
+   * @return
+   */
+  private Collection<? extends GrantedAuthority> authorities() {
+    return Arrays.asList(new SimpleGrantedAuthority("User"));
   }
 }
