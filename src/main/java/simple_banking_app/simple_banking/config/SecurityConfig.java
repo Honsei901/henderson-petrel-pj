@@ -1,64 +1,57 @@
 package simple_banking_app.simple_banking.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import simple_banking_app.simple_banking.service.AccountService;
-
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
 
-  @Autowired
-  AccountService accountService;
-
   @Bean
-  public static PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
-
-  @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.cors().configurationSource(this.corsConfigurationSource());
-
-    http.csrf().disable();
-
-    http.authorizeRequests((requests) -> requests.requestMatchers("/login").permitAll().anyRequest().authenticated());
-
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/api/signup").permitAll()
+            .anyRequest().authenticated())
+        .httpBasic(Customizer.withDefaults());
     return http.build();
   }
 
-  // CORSの設定
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
+    // 許可するオリジンを指定 (例: Reactアプリが動作しているオリジン)
+    configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
 
-    configuration.addAllowedOriginPattern("*");
+    // 許可するHTTPメソッドを指定
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-    configuration.addAllowedMethod("*");
+    // 許可するHTTPヘッダーを指定
+    configuration.setAllowedHeaders(Arrays.asList("*"));
 
-    configuration.addAllowedHeader("*");
-
+    // 認証情報（例: Cookie）をリクエストに含めることを許可
     configuration.setAllowCredentials(true);
 
+    // 特定のパスに対してCORS設定を適用
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", configuration); // 全てのエンドポイントに適用
-
+    source.registerCorsConfiguration("/**", configuration);
     return source;
   }
 
-  @Autowired
-  public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(accountService).passwordEncoder(passwordEncoder());
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
   }
 }

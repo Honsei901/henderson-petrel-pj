@@ -1,96 +1,71 @@
-package simple_banking_app.simple_banking.Entity;
+package simple_banking_app.simple_banking.entity;
 
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-public class Account implements UserDetails {
+@Table(name = "accounts")
+public class Account {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(nullable = false, unique = true)
   private String username;
 
+  @JsonIgnore
+  @Column(nullable = false)
   private String password;
 
-  private BigDecimal balance;
-
-  @OneToMany(mappedBy = "account")
-  private List<Transaction> transactions;
-
-  @Transient
-  private Collection<? extends GrantedAuthority> authorities;
+  @Column(nullable = false)
+  private Double deposit;
 
   public Account() {
   }
 
-  public Account(String username, String password, BigDecimal balance, List<Transaction> transactions,
-      Collection<? extends GrantedAuthority> authorities) {
+  public Account(String username, String password, Double deposit) {
     this.username = username;
     this.password = password;
-    this.balance = balance;
-    this.transactions = transactions;
-    this.authorities = authorities;
+    this.deposit = deposit;
   }
 
   public Long getId() {
     return id;
   }
 
-  public String getUsername() {
-    return username;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public BigDecimal getBalance() {
-    return balance;
-  }
-
-  public List<Transaction> getTransactions() {
-    return transactions;
-  }
-
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return authorities;
-  }
-
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public String getUsername() {
+    return username;
   }
 
   public void setUsername(String username) {
     this.username = username;
   }
 
+  public String getPassword() {
+    return password;
+  }
+
   public void setPassword(String password) {
     this.password = password;
   }
 
-  public void setBalance(BigDecimal balance) {
-    this.balance = balance;
+  public Double getDeposit() {
+    return deposit;
   }
 
-  public void setTransactions(List<Transaction> transactions) {
-    this.transactions = transactions;
-  }
-
-  public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
-    this.authorities = authorities;
+  public void setDeposit(Double deposit) {
+    this.deposit = deposit;
   }
 
 }
