@@ -56,7 +56,7 @@ public class AuthController {
       cookie.setHttpOnly(true);
       cookie.setSecure(false);
       cookie.setPath("/");
-      cookie.setMaxAge(7 * 24 * 60 * 60);
+      cookie.setMaxAge(1 * 60);
 
       response.addCookie(cookie);
       return ResponseEntity.ok("Login successful");

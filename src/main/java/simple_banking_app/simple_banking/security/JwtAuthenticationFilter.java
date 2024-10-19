@@ -27,6 +27,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     String jwt = null;
+    String username = null;
+
+    String path = request.getRequestURI();
+    if (path.equals("/api/login") || path.equals("/api/signup")) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     Cookie[] cookies = request.getCookies();
     if (cookies != null) {
       for (Cookie cookie : cookies) {
@@ -37,7 +45,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       }
     }
 
-    String username = null;
     if (jwt != null) {
       username = jwtUtil.extractUsername(jwt);
     }

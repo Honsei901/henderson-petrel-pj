@@ -64,10 +64,19 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
+    // 許可するオリジンを指定 (例: Reactアプリが動作しているオリジン)
     configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+
+    // 許可するHTTPメソッドを指定
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+    // 許可するHTTPヘッダーを指定
     configuration.setAllowedHeaders(Arrays.asList("*"));
+
+    // 認証情報（例: Cookie）をリクエストに含めることを許可
     configuration.setAllowCredentials(true);
+
+    // 特定のパスに対してCORS設定を適用
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
