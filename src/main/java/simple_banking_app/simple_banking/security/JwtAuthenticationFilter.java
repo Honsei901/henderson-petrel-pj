@@ -26,11 +26,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    String jwt = null;
+    String accessToken = null;
     String username = null;
 
     String path = request.getRequestURI();
-    if (path.equals("/api/login") || path.equals("/api/signup")) {
+    if (path.equals("/api/login")
+        || path.equals("/api/signup")
+        || path.equals("/api/refresh-token")) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -39,19 +41,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     if (cookies != null) {
       for (Cookie cookie : cookies) {
         if (cookie.getName().equals("web-token")) {
-          jwt = cookie.getValue();
+          accessToken = cookie.getValue();
           break;
         }
       }
     }
 
-    if (jwt != null) {
-      username = jwtUtil.extractUsername(jwt);
+    if (accessToken != null) {
+      username = jwtUtil.extractUsername(accessToken);
     }
 
-    // セキュリティコンテキストに認証情報を設定
+    // Set authentication information in the security context.
     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-      if (jwtUtil.validateToken(jwt, username)) {
+      if (jwtUtil.validateToken(accessToken, username)) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
             null, new ArrayList<>());
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

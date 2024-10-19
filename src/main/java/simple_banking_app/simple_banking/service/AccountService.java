@@ -16,7 +16,7 @@ public class AccountService {
   private PasswordEncoder passwordEncoder;
 
   /**
-   * ログインのためパスワードが正しいか確認
+   * Check the password to login.
    * 
    * @param username
    * @param password
@@ -34,7 +34,7 @@ public class AccountService {
   }
 
   /**
-   * 新規登録
+   * Register new account.
    * 
    * @param username
    * @param password

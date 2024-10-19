@@ -16,7 +16,7 @@ public class JwtUtil {
   private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
   /**
-   * JWTトークンの生成
+   * Generate access token.
    * 
    * @param username
    * @return
@@ -31,7 +31,22 @@ public class JwtUtil {
   }
 
   /**
-   * トークンの有効性をチェック
+   * Generate refresh token.
+   * 
+   * @param username
+   * @return
+   */
+  public String generateRefreshToken(String username) {
+    return Jwts.builder()
+        .setSubject(username)
+        .setIssuedAt(new Date(System.currentTimeMillis()))
+        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))
+        .signWith(key, SignatureAlgorithm.HS256)
+        .compact();
+  }
+
+  /**
+   * Check the validity of the token.
    * 
    * @param token
    * @param username
@@ -43,7 +58,7 @@ public class JwtUtil {
   }
 
   /**
-   * JWTトークンの検証とユーザー名の取得
+   * Validate the JWT token and retrieve the username.
    * 
    * @param token
    * @return
@@ -59,7 +74,7 @@ public class JwtUtil {
   }
 
   /**
-   * トークンの有効期限をチェック
+   * Check the token's expiration date.
    * 
    * @param token
    * @return

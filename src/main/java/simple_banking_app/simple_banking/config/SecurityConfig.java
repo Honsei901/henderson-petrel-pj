@@ -53,7 +53,7 @@ public class SecurityConfig {
     http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/api/signup", "/api/login").permitAll()
+            .requestMatchers("/api/signup", "/api/login", "/api/refresh-token").permitAll()
             .anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -64,19 +64,19 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    // 許可するオリジンを指定 (例: Reactアプリが動作しているオリジン)
+    // Specify the allowed origin.
     configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
 
-    // 許可するHTTPメソッドを指定
+    // Specify the allowed HTTP methods.
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-    // 許可するHTTPヘッダーを指定
+    // Specify the allowed headers.
     configuration.setAllowedHeaders(Arrays.asList("*"));
 
-    // 認証情報（例: Cookie）をリクエストに含めることを許可
+    // Allow credentials.
     configuration.setAllowCredentials(true);
 
-    // 特定のパスに対してCORS設定を適用
+    // Apply CORS settings to a specific path.
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
