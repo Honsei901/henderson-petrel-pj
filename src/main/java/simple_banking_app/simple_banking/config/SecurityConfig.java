@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -65,19 +64,10 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    // 許可するオリジンを指定 (例: Reactアプリが動作しているオリジン)
     configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-
-    // 許可するHTTPメソッドを指定
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-    // 許可するHTTPヘッダーを指定
     configuration.setAllowedHeaders(Arrays.asList("*"));
-
-    // 認証情報（例: Cookie）をリクエストに含めることを許可
     configuration.setAllowCredentials(true);
-
-    // 特定のパスに対してCORS設定を適用
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
