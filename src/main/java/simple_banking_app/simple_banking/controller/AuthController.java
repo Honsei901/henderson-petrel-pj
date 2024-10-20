@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import simple_banking_app.simple_banking.dto.requests.LoginRequest;
 import simple_banking_app.simple_banking.dto.requests.SignupRequest;
+import simple_banking_app.simple_banking.dto.responses.AccountResponse;
 import simple_banking_app.simple_banking.entity.Account;
 import simple_banking_app.simple_banking.service.AuthService;
 
@@ -36,7 +37,11 @@ public class AuthController {
       response.addCookie(cookies[0]);
       response.addCookie(cookies[1]);
 
-      return ResponseEntity.ok("Login successful");
+      Account account = authService.getAccountByToken(cookies[0].getValue());
+      AccountResponse accountResponse = new AccountResponse(account.getId(), account.getUsername(),
+          account.getDeposit());
+
+      return ResponseEntity.ok(accountResponse);
     } catch (Exception e) {
       return ResponseEntity.badRequest().body(e.getMessage());
     }
@@ -55,7 +60,6 @@ public class AuthController {
           signupRequest.getUsername(),
           signupRequest.getPassword(),
           signupRequest.getDeposit());
-
       return ResponseEntity.ok(account);
     } catch (Exception e) {
       return ResponseEntity.badRequest().body(e.getMessage());
@@ -74,7 +78,6 @@ public class AuthController {
     try {
       Cookie accessTokenCookie = authService.generateAccessToken(request);
       response.addCookie(accessTokenCookie);
-
       return ResponseEntity.ok("Access token refreshed successfully");
     } catch (Exception e) {
       return ResponseEntity.badRequest().body(e.getMessage());

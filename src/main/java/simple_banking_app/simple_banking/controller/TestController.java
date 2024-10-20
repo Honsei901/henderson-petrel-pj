@@ -18,7 +18,7 @@ public class TestController {
   @Autowired
   private AccountRepository accountRepository;
 
-  @GetMapping("/user")
+  @GetMapping("/account")
   public ResponseEntity<AccountResponse> getUserInfo(Authentication authentication) {
     String username = authentication.getName();
     Account account = accountRepository.findByUsername(username)

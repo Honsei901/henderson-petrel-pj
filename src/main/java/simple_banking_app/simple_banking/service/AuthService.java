@@ -16,17 +16,18 @@ import simple_banking_app.simple_banking.security.JwtUtil;
 
 @Service
 public class AuthService {
-  @Autowired
-  private AccountRepository accountRepository;
-
-  @Autowired
-  private AuthenticationManager authenticationManager;
 
   @Autowired
   private JwtUtil jwtUtil;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
+
+  @Autowired
+  private AccountRepository accountRepository;
+
+  @Autowired
+  private AuthenticationManager authenticationManager;
 
   /**
    * Check the password to login.
@@ -53,19 +54,11 @@ public class AuthService {
     Cookie[] cookies = new Cookie[2];
 
     // Generate cookie for the access token.
-    Cookie accessTokenCookie = new Cookie("web-token", token);
-    accessTokenCookie.setHttpOnly(true);
-    accessTokenCookie.setSecure(false);
-    accessTokenCookie.setPath("/");
-    accessTokenCookie.setMaxAge(1 * 60);
+    Cookie accessTokenCookie = generateAccessTokenCookie(token);
     cookies[0] = accessTokenCookie;
 
     // Generate cookie for the refresh token.
-    Cookie refreshTokenCookie = new Cookie("refresh-token", refreshToken);
-    refreshTokenCookie.setHttpOnly(true);
-    refreshTokenCookie.setSecure(false);
-    refreshTokenCookie.setPath("/");
-    refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+    Cookie refreshTokenCookie = generateRefreshTokenCookie(refreshToken);
     cookies[1] = refreshTokenCookie;
 
     return cookies;
@@ -106,7 +99,7 @@ public class AuthService {
     Cookie[] cookies = request.getCookies();
     if (cookies != null) {
       for (Cookie cookie : cookies) {
-        if (cookie.getName().equals("refresh-token")) {
+        if (cookie.getName().equals("refresh_id")) {
           refreshToken = cookie.getValue();
           break;
         }
@@ -120,15 +113,53 @@ public class AuthService {
     if (refreshToken != null && jwtUtil.validateToken(refreshToken, username)) {
       String newAccessToken = jwtUtil.generateToken(username);
 
-      Cookie accessTokenCookie = new Cookie("web-token", newAccessToken);
-      accessTokenCookie.setHttpOnly(true);
-      accessTokenCookie.setSecure(false);
-      accessTokenCookie.setPath("/");
-      accessTokenCookie.setMaxAge(1 * 60);
-
+      Cookie accessTokenCookie = generateAccessTokenCookie(newAccessToken);
       return accessTokenCookie;
     } else {
       throw new Exception("Invalid refresh token");
     }
+  }
+
+  /**
+   * 
+   * @param token
+   * @return
+   * @throws Exception
+   */
+  public Account getAccountByToken(String token) throws Exception {
+    String username = jwtUtil.extractUsername(token);
+    Account account = accountRepository.findByUsername(username)
+        .orElseThrow(() -> new Exception("Account doesn't exist"));
+    return account;
+  }
+
+  /**
+   * Generate a cookie for the access token.
+   * 
+   * @param token
+   * @return
+   */
+  private Cookie generateAccessTokenCookie(String token) {
+    Cookie accessTokenCookie = new Cookie("aid", token);
+    accessTokenCookie.setHttpOnly(true);
+    accessTokenCookie.setSecure(false);
+    accessTokenCookie.setPath("/");
+    accessTokenCookie.setMaxAge(15 * 60);
+    return accessTokenCookie;
+  }
+
+  /**
+   * Generate a cookie for the refresh token.
+   * 
+   * @param refreshToken
+   * @return
+   */
+  private Cookie generateRefreshTokenCookie(String refreshToken) {
+    Cookie refreshTokenCookie = new Cookie("refresh_id", refreshToken);
+    refreshTokenCookie.setHttpOnly(true);
+    refreshTokenCookie.setSecure(false);
+    refreshTokenCookie.setPath("/");
+    refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+    return refreshTokenCookie;
   }
 }

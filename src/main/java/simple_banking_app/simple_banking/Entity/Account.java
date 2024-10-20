@@ -1,7 +1,5 @@
 package simple_banking_app.simple_banking.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +18,6 @@ public class Account {
   @Column(nullable = false, unique = true)
   private String username;
 
-  @JsonIgnore
   @Column(nullable = false)
   private String password;
 
