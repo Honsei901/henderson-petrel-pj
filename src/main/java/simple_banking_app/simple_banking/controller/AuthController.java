@@ -48,6 +48,20 @@ public class AuthController {
   }
 
   /**
+   * Log the user out.
+   * 
+   * @param response
+   * @return
+   */
+  @PostMapping("/logout")
+  public ResponseEntity<Void> logout(HttpServletResponse response) {
+    Cookie[] cookies = authService.deleteAuthentication();
+    response.addCookie(cookies[0]);
+    response.addCookie(cookies[1]);
+    return ResponseEntity.ok().build();
+  }
+
+  /**
    * Create new account.
    * 
    * @param signupRequest

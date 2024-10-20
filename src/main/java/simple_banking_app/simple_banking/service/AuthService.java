@@ -65,6 +65,23 @@ public class AuthService {
   }
 
   /**
+   * Delete the authentication.
+   * 
+   * @return
+   */
+  public Cookie[] deleteAuthentication() {
+    Cookie[] cookies = new Cookie[2];
+
+    Cookie deletedAccessTokenCookie = deleteAccessTokenCookie();
+    cookies[0] = deletedAccessTokenCookie;
+
+    Cookie deletedRefreshTokenCookie = deleteRefreshTokenCookie();
+    cookies[1] = deletedRefreshTokenCookie;
+
+    return cookies;
+  }
+
+  /**
    * Register new account.
    * 
    * @param username
@@ -146,6 +163,34 @@ public class AuthService {
     accessTokenCookie.setPath("/");
     accessTokenCookie.setMaxAge(15 * 60);
     return accessTokenCookie;
+  }
+
+  /**
+   * Delete a cookie for the access token.
+   * 
+   * @return
+   */
+  private Cookie deleteAccessTokenCookie() {
+    Cookie accessTokenCookie = new Cookie("aid", null);
+    accessTokenCookie.setHttpOnly(true);
+    accessTokenCookie.setSecure(false);
+    accessTokenCookie.setPath("/");
+    accessTokenCookie.setMaxAge(0);
+    return accessTokenCookie;
+  }
+
+  /**
+   * Delete a cookie for the refresh token.
+   * 
+   * @return
+   */
+  private Cookie deleteRefreshTokenCookie() {
+    Cookie refreshTokenCookie = new Cookie("refresh_id", null);
+    refreshTokenCookie.setHttpOnly(true);
+    refreshTokenCookie.setSecure(false);
+    refreshTokenCookie.setPath("/");
+    refreshTokenCookie.setMaxAge(0);
+    return refreshTokenCookie;
   }
 
   /**
