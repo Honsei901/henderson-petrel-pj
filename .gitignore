@@ -33,10 +33,10 @@ build/
 .vscode/
 
 ### DB ###
-database/
+/database
 
 ### Front Side Development ###
-front-dev/
+/front-dev
 
 ### Production ###
-public/
+/public
