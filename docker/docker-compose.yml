@@ -2,15 +2,22 @@ services:
   app:
     build:
       context: ../
-      dockerfile: docker/dockerfile
+      dockerfile: docker/containers/backend/dockerfile
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/user_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/banking_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root_pass
     depends_on:
       - mysql
+  
+  nginx:
+    build:
+      context: ../
+      dockerfile: docker/containers/frontend/dockerfile
+    ports:
+      - "3000:80"
       
   mysql:
     image: mysql:5.7

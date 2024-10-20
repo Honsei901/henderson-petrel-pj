@@ -37,3 +37,6 @@ database/
 
 ### Front Side Development ###
 front-dev/
+
+### Production Public ###
+public/
