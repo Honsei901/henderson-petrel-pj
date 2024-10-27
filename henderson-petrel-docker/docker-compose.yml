@@ -4,29 +4,29 @@ services:
       context: ../
       dockerfile: docker/containers/backend/dockerfile
     ports:
-      - "8081:8081"
+      - '8081:8081'
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/banking_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root_pass
     depends_on:
       - mysql
-  
+
   nginx:
     build:
       context: ../
       dockerfile: docker/containers/frontend/dockerfile
     ports:
-      - "3000:80"
-      
+      - '3000:80'
+
   mysql:
     image: mysql:5.7
-    container_name: mysql_container
+    container_name: henderson_petrel_mysql_container
     environment:
       MYSQL_ROOT_PASSWORD: root_pass
       MYSQL_DATABASE: banking_db
     ports:
-      - "3306:3306"
+      - '3306:3306'
     volumes:
       - ../database:/var/lib/mysql
     entrypoint: >
@@ -34,11 +34,11 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin_container
+    container_name: henderson_petrel_phpmyadmin_container
     environment:
       PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: root_pass
     ports:
-      - "8080:80"
+      - '8080:80'
     depends_on:
       - mysql
